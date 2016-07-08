@@ -243,31 +243,7 @@ co["OD0027"]="Unique"
 av["OD0027"]="1"
 ds["OD0027"]="The OID attribute for MetaDataVersion element must be unique within a single study."
 
-define.elements.each('/*') do |element|
-if element.name=="Study" then n[i]+=1;end;
-if element.name=="MetaDataVersion" then n[i+1]+=1;end;
-end;
-define.elements.each('/*/*') do |element|
-if element.name=="Study" then n[i]+=1;end;
-if element.name=="MetaDataVersion" then n[i+1]+=1;end;
-end;
-define.elements.each('/*/*/*') do |element|
-if element.name=="Study" then n[i]+=1;end;
-if element.name=="MetaDataVersion" then n[i+1]+=1;end;
-end;
-define.elements.each('/*/*/*/*') do |element|
-if element.name=="Study" then n[i]+=1;end;
-if element.name=="MetaDataVersion" then n[i+1]+=1;end;
-end;
-define.elements.each('/*/*/*/*/*') do |element|
-if element.name=="Study" then n[i]+=1;end;
-if element.name=="MetaDataVersion" then n[i+1]+=1;end;
-end;
-define.elements.each('/*/*/*/*/*/*') do |element|
-if element.name=="Study" then n[i]+=1;end;
-if element.name=="MetaDataVersion" then n[i+1]+=1;end;
-end;
-define.elements.each('/*/*/*/*/*/*/*') do |element|
+define.elements.each('//*') do |element|
 if element.name=="Study" then n[i]+=1;end;
 if element.name=="MetaDataVersion" then n[i+1]+=1;end;
 end;
