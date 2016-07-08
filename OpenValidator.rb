@@ -3,13 +3,14 @@ require 'rexml/document'
 require 'date'
 require 'kconv'
 
+enc = Encoding::find("locale")
 puts "Open Validator - PMDA Validation Rule Reject Checker"
 puts "Programmed by Osamu Kotera"
 puts "Drop Define.xml to this exefile"
 puts "or default filename as defne.xml in the same directory"
 puts ""
-puts "define.xmlをドラッグ＆ドロップすると点検結果を出力します".encode("Windows-31J")
-puts 'ダブルクリックした場合、同じフォルダ内の"define.xml"をチェックします'.encode("Windows-31J")
+puts "define.xmlをドラッグ＆ドロップすると点検結果を出力します".encode(enc)
+puts 'ダブルクリックした場合、同じフォルダ内の"define.xml"をチェックします'.encode(enc)
 puts 'now checking (takes ca.30sec)'
 if ARGV.size > 0 then define = REXML::Document.new(open(ARGV[0]))
 else
@@ -288,7 +289,7 @@ if ds[id[j]]==nil then ds[id[j]]="<CHECK>" end
 text= '"' + j.to_s  + '","' + id[j] + '",""' + ms[id[j]] + '","' + xp[id[j]] \
 + '","' + at[id[j]] + '","' + co[id[j]] + '",="' + va[j] + '","' + av[id[j]] \
 + '","' + ds[id[j]] + '"'
-out_file.puts text.encode("Windows-31J")
+out_file.puts text.encode(enc)
 end
 
 out_file.puts ""
