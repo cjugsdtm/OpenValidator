@@ -177,29 +177,58 @@ i=0
 checklist.each_line{|line|
 sp=line.split(';')
 
-ms[sp[0]]=sp[1]
-xp[sp[0]]=sp[2]
-at[sp[0]]=sp[3]
-co[sp[0]]=sp[4]
-av[sp[0]]=sp[5]
-ds[sp[0]]=sp[6].chop
+ms[sp[0]]=sp[1] # Message
+xp[sp[0]]=sp[2] # XPath
+at[sp[0]]=sp[3] # Attribute
+co[sp[0]]=sp[4] # Core
+av[sp[0]]=sp[5] # Allowable Value
+ds[sp[0]]=sp[6].chop # Description
 
 
 define.elements.each(sp[2]) do |element|
-i=i+1
-id[i]=sp[0]
+id[i]=sp[0] # Rule ID
 
 if id[i].start_with?("DD0006")  then
   va[i]=element.name
 else
-  va[i]=element.attributes[sp[3]]
+  va[i]=element.attributes[at[sp[0]]]
+end
+
+# Actual Check Rule
+if av[sp[0]]=="Text"
+  # Any text is allowable
+  if sp[0]=="DD0003-30"
+    # There is BUSINESS RULE: Reference to the unique ID of an ItemDef element.
+    err = true
+    define.elements.each('//ItemDef') do |itemdef|
+      if(va[i] == itemdef.attributes['OID'])
+        err = false
+      end
+    end
+    if(err)
+      i = i+1
+    end
+  end
+elsif av[sp[0]]=="Integer" && co[sp[0]] == "Required"
+  # Value which cannot be casted into integer should raise error.
+  begin
+    val = Integer(va[i])
+  rescue ArgumentError
+    i = i+1
+  end
+elsif av[sp[0]]=="Allowable Values: Yes No" && co[sp[0]] == "Required"
+  # TODO:Methods to specify allowable codelist should be defined.
+  if ! va[i].match(/(Yes|No)/)
+    i = i+1
+  end
+else
+  i=i+1
 end
 end
 }
 #DD0025
 
 
-i=i+1
 id[i]="OD0010"
 ms["OD0010"]="Missing XML declaration"
 xp["OD0010"]="ODM"
@@ -208,11 +237,11 @@ co["OD0010"]="Required"
 av["OD0010"]="Version Encoding"
 ds["OD0010"]="Define.xml must start with an XML declaration."
 va[i]= "ver " + define.xml_decl.version + " " + define.xml_decl.encoding
-
-
-
-
 i=i+1
+
+
+
+
 id[i]="OD0012"
 ms["OD0012"]="Invalid root element"
 xp["OD0012"]="ODM"
@@ -221,9 +250,8 @@ co["OD0012"]="Required"
 av["OD0012"]="ODM"
 ds["OD0012"]="Define.xml must contain a root element called ODM."
 va[i]= define.elements['/*'].name
-
-
 i=i+1
+
 n=Hash.new
 n[i]=0;n[i+1]=0
 
@@ -284,7 +312,6 @@ for j in 1..i
 
 if va[j]==nil then va[j]="<NULL>" end
 if ds[id[j]]==nil then ds[id[j]]="<CHECK>" end
-
 text= '"' + j.to_s  + '","' + id[j] + '",""' + ms[id[j]] + '","' + xp[id[j]] \
 + '","' + at[id[j]] + '","' + co[id[j]] + '",="' + va[j] + '","' + av[id[j]] \
 + '","' + ds[id[j]] + '"'
